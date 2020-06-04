@@ -1,0 +1,57 @@
+<resources>
+    <string name="app_name">Popular Movies</string>
+
+    <string name="description_movie_details_movie_poster_image_view">MoviePosterThumbnail</string>
+    <string name="description_image_view_tmdb_icon">TMDb icon</string>
+    <string name="description_image_view_movie_item">MovieItemThumbnail</string>
+    <string name="description_image_view_error_or_no_internet">Error/No internet</string>
+
+    <string name="button_retry_fetching_movies">Retry</string>
+
+    <string name="text_label_genre">Genre</string>
+    <string name="text_label_tag_line">Tag Line</string>
+    <string name="text_label_plot_synopsis">Plot Synopsis</string>
+
+    <string name="text_text_view_user_rating">\?</string>
+    <string name="text_missing_value">[Missing]</string>
+    <string name="text_tmdb_disclaimer">This product uses the TMDb API but is not endorsed or certified by TMDb.</string>
+    <string name="text_runtime_unit"> min</string>
+    <string name="comma">,&#160;</string>
+
+    <string name="json_key_array_results">results</string>
+    <string name="json_key_id">id</string>
+    <string name="json_key_title">original_title</string>
+    <string name="json_key_poster_path">poster_path</string>
+    <string name="json_key_runtime">runtime</string>
+    <string name="json_key_user_rating">vote_average</string>
+    <string name="json_key_release_date">release_date</string>
+    <string name="json_key_array_genres">genres</string>
+    <string name="json_key_tag_line">tagline</string>
+    <string name="json_key_plot_synopsis">overview</string>
+    <string name="json_key_genre">name</string>
+
+    <string name="intent_key_movie_id">movieID</string>
+    <string name="intent_key_movie_title">movieTitle</string>
+    <string name="key_image_resolution_shared_pref">image_quality</string>
+
+    <string name="message_no_internet">Seems like there is no internet connection :(</string>
+    <string name="message_error_encountered">An error occurred.Please try again</string>
+
+    <string name="menu_sort_popularity">Sort by Popularity</string>
+    <string name="menu_sort_user_rating">Sort by User Rating</string>
+    <string name="menu_use_standard_images">Standard Images</string>
+    <string name="menu_use_high_quality_images">High Resolution Images</string>
+
+    <string name="url_base_image">https://image.tmdb.org/t/p/</string>
+    <string name="url_image_quality">w185</string>
+    <string name="url_image_quality_high">w500</string>
+    <string name="url_base_movie">https://api.themoviedb.org/3</string>
+    <string name="url_list_of_movies">/discover/movie</string>
+    <string name="url_single_movie">/movie/</string>
+    <string name="url_key_api">api_key</string>
+    <string name="url_key_sort">sort_by</string>
+    <string name="sort_value_popularity">popularity.desc</string>
+    <string name="sort_value_user_rating">vote_average.desc</string>
+
+    <string name="api_key_value"> </string>
+</resources>
