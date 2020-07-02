@@ -89,5 +89,5 @@
     <string name="menu_share_movie">Share</string>
     <string name="menu_refresh">Refresh</string>
 
-    <string name="api_key_value"> </string>
+    <string name="api_key_value">[Your API key here]</string>
 </resources>
