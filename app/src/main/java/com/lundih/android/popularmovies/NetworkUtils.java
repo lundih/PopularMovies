@@ -14,6 +14,9 @@ import java.net.URL;
 import java.util.Scanner;
 
 class NetworkUtils {
+    static final int REQUEST_FOR_DETAILS = 1;
+    static final int REQUEST_FOR_TRAILERS = 2;
+    static final int REQUEST_FOR_REVIEWS = 3;
 
     // Ping a server to ensure the internet connection works
     static boolean canPing() {
@@ -47,8 +50,8 @@ class NetworkUtils {
         return getResponseFromHttpUrl(formURLFromUri(buildUri(context, sortBy)));
     }
 
-    static String fetchMovieData(Context context, int movieID) throws IOException {
-        return getResponseFromHttpUrl(formURLFromUri(buildUri(context, movieID)));
+    static String fetchMovieData(Context context, int movieID, int requestFor) throws IOException {
+        return getResponseFromHttpUrl(formURLFromUri(buildUri(context, movieID, requestFor)));
     }
 
     /**
@@ -63,11 +66,26 @@ class NetworkUtils {
     }
 
     /**
-     * Build URL to query TMDB for the list of movies
+     * Build URL to query TMDB for movie details, trailers or reviews
      * @param movieID is used to get details about the movie selected from the grid
      * */
-    private static Uri buildUri(Context context, int movieID) {
-        return Uri.parse(context.getString(R.string.url_base_movie) + context.getString(R.string.url_single_movie) + movieID).buildUpon()
+    private static Uri buildUri(Context context, int movieID, int requestFor) {
+        String uriString = context.getString(R.string.url_base_movie) + context.getString(R.string.url_single_movie) + movieID;
+        switch (requestFor) {
+            case 1:
+                break;
+            case 2:
+                uriString += context.getString(R.string.url_movie_trailers);
+                break;
+            case 3:
+                uriString += context.getString(R.string.url_movie_reviews);
+                break;
+            default:
+                uriString = "";
+                break;
+        }
+
+        return Uri.parse(uriString).buildUpon()
                 .appendQueryParameter(context.getString(R.string.url_key_api), context.getString(R.string.api_key_value))
                 .build();
     }

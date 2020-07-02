@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
+
     <group
         android:id="@+id/group_sort"
         android:orderInCategory="100"
@@ -11,17 +12,45 @@
         <item android:id="@+id/menu_sort_by_user_rating"
             android:title="@string/menu_sort_user_rating"
             app:showAsAction="never" />
-    </group>
-    <group
-        android:id="@+id/image_quality"
-        android:orderInCategory="101"
-        android:checkableBehavior="single">
-        <item android:id="@+id/menu_standard_quality_image"
-            android:title="@string/menu_use_standard_images"
+        <item android:id="@+id/menu_favourites"
+            android:title="@string/menu_favourites"
             app:showAsAction="never"/>
-        <item android:id="@+id/menu_high_quality_image"
-            android:title="@string/menu_use_high_quality_images"
-            app:showAsAction="never" />
     </group>
 
+    <item android:title="@string/menu_group_item_image_quality"
+        android:orderInCategory="101"
+        app:showAsAction="never">
+        <menu>
+            <group
+                android:id="@+id/group_image_quality"
+                android:checkableBehavior="single">
+                <item android:id="@+id/menu_low_quality_image"
+                    android:title="@string/menu_use_low_quality_images"
+                    app:showAsAction="never"/>
+                <item android:id="@+id/menu_medium_quality_image"
+                    android:title="@string/menu_use_medium_quality_images"
+                    app:showAsAction="never" />
+                <item android:id="@+id/menu_high_quality_image"
+                    android:title="@string/menu_use_high_quality_images"
+                    app:showAsAction="never"/>
+            </group>
+        </menu>
+    </item>
+
+    <item android:title="@string/menu_group_item_column_count"
+        android:orderInCategory="102"
+        app:showAsAction="never">
+        <menu>
+            <group
+                android:id="@+id/group_column_count"
+                android:checkableBehavior="single">
+                <item android:id="@+id/menu_standard_column_count"
+                    android:title="@string/menu_standard_column_count"
+                    app:showAsAction="never"/>
+                <item android:id="@+id/menu_higher_column_count"
+                    android:title="@string/menu_higher_column_count"
+                    app:showAsAction="never" />
+            </group>
+        </menu>
+    </item>
 </menu>

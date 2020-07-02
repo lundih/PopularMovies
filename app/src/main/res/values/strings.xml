@@ -1,57 +1,93 @@
 <resources>
     <string name="app_name">Popular Movies</string>
 
-    <string name="description_movie_details_movie_poster_image_view">MoviePosterThumbnail</string>
-    <string name="description_image_view_tmdb_icon">TMDb icon</string>
-    <string name="description_image_view_movie_item">MovieItemThumbnail</string>
-    <string name="description_image_view_error_or_no_internet">Error/No internet</string>
+    <string name="json_key_array_results" translatable="false">results</string>
+    <string name="json_key_id" translatable="false">id</string>
+    <string name="json_key_title" translatable="false">original_title</string>
+    <string name="json_key_poster_path" translatable="false">poster_path</string>
+    <string name="json_key_runtime" translatable="false">runtime</string>
+    <string name="json_key_user_rating" translatable="false">vote_average</string>
+    <string name="json_key_release_date" translatable="false">release_date</string>
+    <string name="json_key_array_genres" translatable="false">genres</string>
+    <string name="json_key_tag_line" translatable="false">tagline</string>
+    <string name="json_key_plot_synopsis" translatable="false">overview</string>
+    <string name="json_key_genre" translatable="false">name</string>
+    <string name="json_key_trailer_title" translateable="false">name</string>
+    <string name="json_key_trailer_key" translatable="false">key</string>
+    <string name="json_key_trailer_site" translatable="false">site</string>
+    <string name="json_key_trailer_type" translatable="false">type</string>
+    <string name="json_key_review_author" translatable="false">author</string>
+    <string name="json_key_review_content" translatable="false">content</string>
+
+    <string name="url_base_image" translatable="false">https://image.tmdb.org/t/p/</string>
+    <string name="url_image_quality_low" translatable="false">w185</string>
+    <string name="url_image_quality_medium" translatable="false">w500</string>
+    <string name="url_image_quality_high" translatable="false">w780</string>
+    <string name="url_base_movie" translatable="false">https://api.themoviedb.org/3</string>
+    <string name="url_list_of_movies" translatable="false">/discover/movie</string>
+    <string name="url_single_movie" translatable="false">/movie/</string>
+    <string name="url_movie_trailers" translatable="false">/videos</string>
+    <string name="url_movie_reviews" translatable="false">/reviews</string>
+    <string name="url_key_api" translatable="false">api_key</string>
+    <string name="url_key_sort" translatable="false">sort_by</string>
+    <string name="url_base_youtube_app" translatable="false">vnd.youtube:</string>
+    <string name="url_base_youtube_web" translatable="false">https://www.youtube.com/watch?v=</string>
+    <string name="sort_value_popularity" translatable="false">popularity.desc</string>
+    <string name="sort_value_user_rating" translatable="false">vote_average.desc</string>
+    <string name="sort_value_favourites" translatable="false">sort_favourites</string>
+    <string name="intent_key_movie_id" translatable="false">movieID</string>
+    <string name="intent_key_movie_title" translatable="false">movieTitle</string>
+    <string name="key_image_resolution_shared_pref" translatable="false">image_quality</string>
+    <string name="key_column_count_shared_pref">column_count</string>
+    <string name="value_youtube_for_comparison" translatable="false">youtube</string>
+    <string name="intent_type_share" translatable="false">text/plain</string>
+
+    <string name="description_movie_details_movie_poster_image_view">movie poster</string>
+    <string name="description_image_view_tmdb_icon">TMDb</string>
+    <string name="description_image_view_movie_item">movie</string>
+    <string name="description_image_view_error_or_no_internet">no movies found</string>
+    <string name="description_fab_favourites">add or remove favourites</string>
 
     <string name="button_retry_fetching_movies">Retry</string>
 
     <string name="text_label_genre">Genre</string>
     <string name="text_label_tag_line">Tag Line</string>
     <string name="text_label_plot_synopsis">Plot Synopsis</string>
+    <string name="text_label_trailers" >Trailers</string>
+    <string name="text_label_reviews">Reviews</string>
 
     <string name="text_text_view_user_rating">\?</string>
     <string name="text_missing_value">[Missing]</string>
     <string name="text_tmdb_disclaimer">This product uses the TMDb API but is not endorsed or certified by TMDb.</string>
-    <string name="text_runtime_unit"> min</string>
+    <string name="text_icons8_attribution">Icons by <a href='https://icons8.com'>icons8</a></string>
+    <string name="text_runtime_minutes"> min</string>
+    <string name="text_runtime_hours">h</string>
     <string name="comma">,&#160;</string>
-
-    <string name="json_key_array_results">results</string>
-    <string name="json_key_id">id</string>
-    <string name="json_key_title">original_title</string>
-    <string name="json_key_poster_path">poster_path</string>
-    <string name="json_key_runtime">runtime</string>
-    <string name="json_key_user_rating">vote_average</string>
-    <string name="json_key_release_date">release_date</string>
-    <string name="json_key_array_genres">genres</string>
-    <string name="json_key_tag_line">tagline</string>
-    <string name="json_key_plot_synopsis">overview</string>
-    <string name="json_key_genre">name</string>
-
-    <string name="intent_key_movie_id">movieID</string>
-    <string name="intent_key_movie_title">movieTitle</string>
-    <string name="key_image_resolution_shared_pref">image_quality</string>
+    <string name="new_line">\n</string>
+    <string name="white_space">&#160;</string>
 
     <string name="message_no_internet">Seems like there is no internet connection :(</string>
-    <string name="message_error_encountered">An error occurred.Please try again</string>
+    <string name="message_error_encountered">An error occurred while fetching movies. Please try again</string>
+    <string name="message_no_app_to_watch_trailer">No app found to watch this trailer&#8230;</string>
+    <string name="message_no_app_to_share">No app available to share&#8230;</string>
+    <string name="message_share_subject">Hey! Check out this movie!</string>
+    <string name="message_movie_added_to_favourites">&#160;has been added to favourites!</string>
+    <string name="message_movie_removed_from_favourites">&#160;has been removed from favourites.</string>
+    <string name="message_no_favourites">No favourites were found. Add favourites from Popular Movies or Highest Rated to view them here, even when offline!</string>
 
-    <string name="menu_sort_popularity">Sort by Popularity</string>
-    <string name="menu_sort_user_rating">Sort by User Rating</string>
-    <string name="menu_use_standard_images">Standard Images</string>
-    <string name="menu_use_high_quality_images">High Resolution Images</string>
-
-    <string name="url_base_image">https://image.tmdb.org/t/p/</string>
-    <string name="url_image_quality">w185</string>
-    <string name="url_image_quality_high">w500</string>
-    <string name="url_base_movie">https://api.themoviedb.org/3</string>
-    <string name="url_list_of_movies">/discover/movie</string>
-    <string name="url_single_movie">/movie/</string>
-    <string name="url_key_api">api_key</string>
-    <string name="url_key_sort">sort_by</string>
-    <string name="sort_value_popularity">popularity.desc</string>
-    <string name="sort_value_user_rating">vote_average.desc</string>
+    <string name="menu_favourites">Favourites</string>
+    <string name="menu_sort_popularity">Popular Movies</string>
+    <string name="menu_sort_user_rating">Highest Rated</string>
+    <string name="menu_group_item_image_quality">Image Quality</string>
+    <string name="menu_use_low_quality_images">Low</string>
+    <string name="menu_use_medium_quality_images">Medium</string>
+    <string name="menu_use_high_quality_images">High</string>
+    <string name="menu_group_item_column_count">Column Count</string>
+    <string name="menu_standard_column_count">Standard</string>
+    <string name="menu_higher_column_count">More Columns</string>
+    <string name="menu_movie_details_activity_menu_label">Menu</string>
+    <string name="menu_share_movie">Share</string>
+    <string name="menu_refresh">Refresh</string>
 
     <string name="api_key_value"> </string>
 </resources>
