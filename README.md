@@ -11,7 +11,7 @@ The app uses the TMDb API for movies. To get it working, an API key has to be pr
 The project should accomplish:<br>
 <ul>
 <li>Fetching data from themovieDB API</li>
-<li>Making use of Android Architecture Components (Room, LiveData, ViewModel and Lifecycle) to create a robust an efficient application</li>
+<li>Making use of Android Architecture Components (Room, LiveData, ViewModel and Lifecycle) to create a robust and efficient application</li>
 </ul><br>
 
 <b>Go on... Movie it! Movie it!</b>
