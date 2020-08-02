@@ -12,6 +12,7 @@ public class CustomViewModel extends AndroidViewModel {
     private LiveData<List<Movie>> favouriteMovies;
     private List<Movie> popularMovies = null;
     private List<Movie> highestRatedMovies = null;
+    private List<Movie> trendingDailyMovies = null;
     private Movie movie = null;
 
     public CustomViewModel(@NonNull Application application) {
@@ -33,6 +34,10 @@ public class CustomViewModel extends AndroidViewModel {
         return highestRatedMovies;
     }
 
+    public List<Movie> getTrendingDailyMovies() {
+        return trendingDailyMovies;
+    }
+
     public Movie getMovie() {
         return movie;
     }
@@ -43,6 +48,10 @@ public class CustomViewModel extends AndroidViewModel {
 
     public void setHighestRatedMovies(List<Movie> highestRatedMovies) {
         this.highestRatedMovies = highestRatedMovies;
+    }
+
+    public void setTrendingDailyMovies(List<Movie> trendingDailyMovies) {
+        this.trendingDailyMovies = trendingDailyMovies;
     }
 
     public void setMovie(Movie movie) {

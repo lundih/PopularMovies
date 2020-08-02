@@ -17,6 +17,7 @@ import android.content.res.Configuration;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -40,6 +41,7 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
     private MenuItem menuItemFavourites;
     private MenuItem menuItemSortByPopularity;
     private MenuItem menuItemSortByUserRating;
+    private MenuItem menuItemSortByTrendingDaily;
     private MenuItem menuItemImageLowQuality;
     private MenuItem menuItemImageMediumQuality;
     private MenuItem menuItemImageHighQuality;
@@ -73,12 +75,12 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
         // Create an action bar
         toolbar = findViewById(R.id.toolbarMainActivity);
         setSupportActionBar(toolbar);
-        if (sortBy.equals(getString(R.string.sort_value_popularity)))
-            toolbar.setTitle(getString(R.string.menu_sort_popularity));
-        else if (sortBy.equals(getString(R.string.sort_value_user_rating)))
-            toolbar.setTitle(getString(R.string.menu_sort_user_rating));
-        else if (sortBy.equals(getString(R.string.sort_value_favourites)))
-            toolbar.setTitle(getString(R.string.menu_favourites));
+        String title = getString(R.string.menu_sort_popularity);
+        if (sortBy.equals(getString(R.string.sort_value_popularity))) title = getString(R.string.menu_sort_popularity);
+        else if (sortBy.equals(getString(R.string.sort_value_user_rating))) title = getString(R.string.menu_sort_user_rating);
+        else if (sortBy.equals(getString(R.string.sort_value_favourites))) title = getString(R.string.menu_favourites);
+        else if (sortBy.equals(getString(R.string.sort_value_trending_daily))) title = getString(R.string.menu_sort_trending_daily);
+        toolbar.setTitle(title);
 
         recyclerViewMovies = findViewById(R.id.recyclerViewMovies);
         progressBarFetchingMovies = findViewById(R.id.progressBarFetchingMainActivityMovies);
@@ -115,6 +117,7 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
         menuItemFavourites = menu.findItem(R.id.menu_favourites);
         menuItemSortByPopularity = menu.findItem(R.id.menu_sort_by_popularity);
         menuItemSortByUserRating = menu.findItem(R.id.menu_sort_by_user_rating);
+        menuItemSortByTrendingDaily = menu.findItem(R.id.menu_sort_by_trending_daily);
         menuItemImageLowQuality = menu.findItem(R.id.menu_low_quality_image);
         menuItemImageMediumQuality = menu.findItem(R.id.menu_medium_quality_image);
         menuItemImageHighQuality = menu.findItem(R.id.menu_high_quality_image);
@@ -125,14 +128,18 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
             menuItemSortByPopularity.setChecked(true);
         else if (sortBy.equals(getString(R.string.sort_value_user_rating)))
             menuItemSortByUserRating.setChecked(true);
+        else if (sortBy.equals(getString(R.string.sort_value_trending_daily)))
+            menuItemSortByTrendingDaily.setChecked(true);
         else if (sortBy.equals(getString(R.string.sort_value_favourites)))
             menuItemFavourites.setChecked(true);
+
         if (imageQuality.equals(getString(R.string.url_image_quality_low)))
             menuItemImageLowQuality.setChecked(true);
         else if (imageQuality.equals(getString(R.string.url_image_quality_medium)))
             menuItemImageMediumQuality.setChecked(true);
         else if (imageQuality.equals(getString(R.string.url_image_quality_high)))
             menuItemImageHighQuality.setChecked(true);
+
         if (columnWidth == STANDARD_COLUMN_COUNT_WIDTH)
             menuItemColumnCountStandard.setChecked(true);
         else if (columnWidth == HIGHER_COLUMN_COUNT_WIDTH)
@@ -160,8 +167,16 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
             toolbar.setTitle(getString(R.string.menu_sort_user_rating));
             refreshMovieList();
 
-            return  true;
-        } else if (id == R.id.menu_favourites){
+            return true;
+        } else if (id == R.id.menu_sort_by_trending_daily) {
+            sharedPreferences.edit().putString(getString(R.string.url_key_sort), getString(R.string.sort_value_trending_daily)).commit();
+            sortBy = sharedPreferences.getString(getString(R.string.url_key_sort), getString(R.string.sort_value_popularity));
+            menuItemSortByTrendingDaily.setChecked(true);
+            toolbar.setTitle(getString(R.string.menu_sort_trending_daily));
+            refreshMovieList();
+
+            return true;
+        } else if (id == R.id.menu_favourites) {
             sharedPreferences.edit().putString(getString(R.string.url_key_sort), getString(R.string.sort_value_favourites)).commit();
             sortBy = sharedPreferences.getString(getString(R.string.url_key_sort), getString(R.string.sort_value_popularity));
             menuItemFavourites.setChecked(true);
@@ -229,7 +244,8 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
                     // If there is no internet connection and the ViewModel does not have movies,
                     //let users know they need an internet connection
                     if ((sortBy.equals(getString(R.string.sort_value_popularity)) && customViewModel.getPopularMovies() == null) ||
-                            (sortBy.equals(getString(R.string.sort_value_user_rating)) && customViewModel.getHighestRatedMovies() == null)) {
+                            (sortBy.equals(getString(R.string.sort_value_user_rating)) && customViewModel.getHighestRatedMovies() == null) ||
+                            (sortBy.equals(getString(R.string.sort_value_trending_daily)) && customViewModel.getTrendingDailyMovies() == null)) {
                         showNotFound(getString(R.string.message_no_internet), R.drawable.ic_no_internet);
                         // Cancel this task... there's no internet anyways
                         this.cancel(true);
@@ -266,10 +282,9 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
                 // Show appropriate views after movies are loaded
                 showFetchedMovies();
                 // Cache movies received from API in View Model
-                if (sortBy.equals(getString(R.string.sort_value_popularity)))
-                    customViewModel.setPopularMovies(movies);
-                else if (sortBy.equals(getString(R.string.sort_value_user_rating)))
-                    customViewModel.setHighestRatedMovies(movies);
+                if (sortBy.equals(getString(R.string.sort_value_popularity))) customViewModel.setPopularMovies(movies);
+                else if (sortBy.equals(getString(R.string.sort_value_user_rating))) customViewModel.setHighestRatedMovies(movies);
+                else if (sortBy.equals(context.getString(R.string.sort_value_trending_daily))) customViewModel.setTrendingDailyMovies(movies);
             } else if (response == null && sortBy.equals(getString(R.string.sort_value_popularity)) && customViewModel.getPopularMovies() != null){
                 // Get popular movies from View Model
                 setUpRecyclerView(customViewModel.getPopularMovies());
@@ -277,6 +292,10 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
             } else if (response == null && sortBy.equals(getString(R.string.sort_value_user_rating)) && customViewModel.getPopularMovies() != null) {
                 // Get highest rated movies from View Model
                 setUpRecyclerView(customViewModel.getHighestRatedMovies());
+                showFetchedMovies();
+            } else if (response == null && sortBy.equals(getString(R.string.sort_value_trending_daily)) && customViewModel.getTrendingDailyMovies() != null) {
+                // Get trending_daily rated movies from View Model
+                setUpRecyclerView(customViewModel.getTrendingDailyMovies());
                 showFetchedMovies();
             } else {
                 // Get movies from database when refreshing manually

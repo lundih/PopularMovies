@@ -59,10 +59,17 @@ class NetworkUtils {
      * @param sortBy is used to choose the criteria for sorting the list of movies
      * */
     private static Uri buildUri(Context context, String sortBy) {
-        return Uri.parse(context.getString(R.string.url_base_movie) + context.getString(R.string.url_list_of_movies)).buildUpon()
-                .appendQueryParameter(context.getString(R.string.url_key_api), context.getString(R.string.api_key_value))
-                .appendQueryParameter(context.getString(R.string.url_key_sort), sortBy)
-                .build();
+        if (!sortBy.equals(context.getString(R.string.sort_value_trending_daily))) {
+            return Uri.parse(context.getString(R.string.url_base_movie) + context.getString(R.string.url_list_of_movies)).buildUpon()
+                    .appendQueryParameter(context.getString(R.string.url_key_sort), sortBy)
+                    .appendQueryParameter(context.getString(R.string.url_key_api), context.getString(R.string.api_key_value))
+                    .build();
+        } else {
+            // Different url for trending_daily movies and also no need for sortBy query parameter
+            return Uri.parse(context.getString(R.string.url_base_movie) + context.getString(R.string.url_list_of_trending_daily_movies)).buildUpon()
+                    .appendQueryParameter(context.getString(R.string.url_key_api), context.getString(R.string.api_key_value))
+                    .build();
+        }
     }
 
     /**

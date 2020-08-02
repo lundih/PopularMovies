@@ -25,6 +25,7 @@
     <string name="url_image_quality_high" translatable="false">w780</string>
     <string name="url_base_movie" translatable="false">https://api.themoviedb.org/3</string>
     <string name="url_list_of_movies" translatable="false">/discover/movie</string>
+    <string name="url_list_of_trending_daily_movies" translatable="false">/trending/movie/day</string>
     <string name="url_single_movie" translatable="false">/movie/</string>
     <string name="url_movie_trailers" translatable="false">/videos</string>
     <string name="url_movie_reviews" translatable="false">/reviews</string>
@@ -35,6 +36,7 @@
     <string name="sort_value_popularity" translatable="false">popularity.desc</string>
     <string name="sort_value_user_rating" translatable="false">vote_average.desc</string>
     <string name="sort_value_favourites" translatable="false">sort_favourites</string>
+    <string name="sort_value_trending_daily" translatable="false">sort_trending_daily</string>
     <string name="intent_key_movie_id" translatable="false">movieID</string>
     <string name="intent_key_movie_title" translatable="false">movieTitle</string>
     <string name="key_image_resolution_shared_pref" translatable="false">image_quality</string>
@@ -69,7 +71,7 @@
     <string name="message_no_internet">Seems like there is no internet connection :(</string>
     <string name="message_error_encountered">An error occurred while fetching movies. Please try again</string>
     <string name="message_no_app_to_watch_trailer">No app found to watch this trailer&#8230;</string>
-    <string name="message_no_app_to_share">No app available to share&#8230;</string>
+    <string name="message_no_app_to_share">No app available to share</string>
     <string name="message_share_subject">Hey! Check out this movie!</string>
     <string name="message_movie_added_to_favourites">&#160;has been added to favourites!</string>
     <string name="message_movie_removed_from_favourites">&#160;has been removed from favourites.</string>
@@ -78,6 +80,7 @@
     <string name="menu_favourites">Favourites</string>
     <string name="menu_sort_popularity">Popular Movies</string>
     <string name="menu_sort_user_rating">Highest Rated</string>
+    <string name="menu_sort_trending_daily">Trending Today</string>
     <string name="menu_group_item_image_quality">Image Quality</string>
     <string name="menu_use_low_quality_images">Low</string>
     <string name="menu_use_medium_quality_images">Medium</string>
