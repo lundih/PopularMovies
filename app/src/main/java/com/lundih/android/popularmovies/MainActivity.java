@@ -289,7 +289,7 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
                 // Get popular movies from View Model
                 setUpRecyclerView(customViewModel.getPopularMovies());
                 showFetchedMovies();
-            } else if (response == null && sortBy.equals(getString(R.string.sort_value_user_rating)) && customViewModel.getPopularMovies() != null) {
+            } else if (response == null && sortBy.equals(getString(R.string.sort_value_user_rating)) && customViewModel.getHighestRatedMovies() != null) {
                 // Get highest rated movies from View Model
                 setUpRecyclerView(customViewModel.getHighestRatedMovies());
                 showFetchedMovies();
