@@ -17,12 +17,18 @@ import android.content.res.Configuration;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
-import android.util.Log;
+import android.text.Editable;
+import android.text.TextWatcher;
+import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.inputmethod.EditorInfo;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
+import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -42,6 +48,7 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
     private MenuItem menuItemSortByPopularity;
     private MenuItem menuItemSortByUserRating;
     private MenuItem menuItemSortByTrendingDaily;
+    private MenuItem menuItemSearch;
     private MenuItem menuItemImageLowQuality;
     private MenuItem menuItemImageMediumQuality;
     private MenuItem menuItemImageHighQuality;
@@ -53,6 +60,8 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
     private ConstraintLayout constraintLayoutDataNotFound;
     private TextView textViewDataNotFound;
     private ImageView imageViewDataNotFound;
+    private ConstraintLayout constraintLayoutSearch;
+    private EditText editTextSearch;
     private Toolbar toolbar;
     private FavouriteMoviesDatabase favouriteMoviesDatabase;
     @SuppressLint("StaticFieldLeak")
@@ -72,6 +81,9 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
         mContext = getApplicationContext();
         customViewModel = new ViewModelProvider(this).get(CustomViewModel.class);
 
+        constraintLayoutSearch = findViewById(R.id.constraintLayoutSearch);
+        constraintLayoutSearch.setVisibility(View.GONE);
+
         // Create an action bar
         toolbar = findViewById(R.id.toolbarMainActivity);
         setSupportActionBar(toolbar);
@@ -80,6 +92,7 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
         else if (sortBy.equals(getString(R.string.sort_value_user_rating))) title = getString(R.string.menu_sort_user_rating);
         else if (sortBy.equals(getString(R.string.sort_value_favourites))) title = getString(R.string.menu_favourites);
         else if (sortBy.equals(getString(R.string.sort_value_trending_daily))) title = getString(R.string.menu_sort_trending_daily);
+        else if (sortBy.equals(getString(R.string.sort_value_search))) title =  getString(R.string.menu_search);
         toolbar.setTitle(title);
 
         recyclerViewMovies = findViewById(R.id.recyclerViewMovies);
@@ -87,24 +100,96 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
         constraintLayoutDataNotFound =findViewById(R.id.constraintLayoutDataNotFound);
         textViewDataNotFound = findViewById(R.id.textViewDataNotFound);
         imageViewDataNotFound = findViewById(R.id.imageViewDataNotFound);
+        editTextSearch = findViewById(R.id.editTextSearch);
         swipeRefreshLayout = findViewById(R.id.swipeRefreshLayout);
         swipeRefreshLayout.setOnRefreshListener(this);
         swipeRefreshLayout.setColorSchemeColors(getColor(R.color.colorAccent));
         Button buttonRetry = findViewById(R.id.buttonRetryMovieFetching);
+        ImageButton imageButtonSearch = findViewById(R.id.imageButtonSearch);
+        final ImageButton imageButtonClearQuery = findViewById(R.id.imageButtonClearQuery);
         buttonRetry.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                refreshMovieList();
+                if (!sortBy.equals(getString(R.string.sort_value_search))) {
+                    refreshMovieList();
+                }else {
+                    if (!editTextSearch.getText().toString().equals("")) {
+                        searchMovie(editTextSearch.getText().toString());
+                    }
+                }
+            }
+        });
+        imageButtonSearch.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (!editTextSearch.getText().toString().equals("")) {
+                    searchMovie(editTextSearch.getText().toString());
+                }
+            }
+        });
+        // Set an action for the search key in the soft keyboard
+        editTextSearch.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+            @Override
+            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+                if (actionId == EditorInfo.IME_ACTION_SEARCH) {
+                    if (!editTextSearch.getText().toString().equals("")) {
+                        InputMethodManager in = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+                        in.hideSoftInputFromWindow(editTextSearch.getWindowToken(), 0);
+                        searchMovie(editTextSearch.getText().toString());
+                    }
+                    return true;
+                }
+                return false;
+            }
+        });
+        // Hide or show the clear query button depending on whether there is text in the editText
+        editTextSearch.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                if (!editTextSearch.getText().toString().equals("")) imageButtonClearQuery.setVisibility(View.VISIBLE);
+                else imageButtonClearQuery.setVisibility(View.GONE);
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+
+            }
+        });
+        imageButtonClearQuery.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                editTextSearch.setText("");
             }
         });
 
         setUpLiveDataFavouriteMovies();
-        if (!sortBy.equals(getString(R.string.sort_value_favourites))) refreshMovieList();
+        if (!sortBy.equals(getString(R.string.sort_value_search))) {
+            if (!sortBy.equals(getString(R.string.sort_value_favourites))) refreshMovieList();
+        } else {
+            showFetchedMovies();
+            recyclerViewMovies.setVisibility(View.GONE);
+            constraintLayoutSearch.setVisibility(View.VISIBLE);
+        }
     }
 
     @Override
     public void onRefresh() {
-        refreshMovieList();
+        if (!sortBy.equals(getString(R.string.sort_value_search))) {
+            refreshMovieList();
+        }else {
+            if (!editTextSearch.getText().toString().equals("")) {
+                searchMovie(editTextSearch.getText().toString());
+            } else {
+                if (swipeRefreshLayout != null) {
+                    swipeRefreshLayout.setRefreshing(false);
+                }
+            }
+        }
     }
 
     @Override
@@ -118,6 +203,7 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
         menuItemSortByPopularity = menu.findItem(R.id.menu_sort_by_popularity);
         menuItemSortByUserRating = menu.findItem(R.id.menu_sort_by_user_rating);
         menuItemSortByTrendingDaily = menu.findItem(R.id.menu_sort_by_trending_daily);
+        menuItemSearch = menu.findItem(R.id.menu_search);
         menuItemImageLowQuality = menu.findItem(R.id.menu_low_quality_image);
         menuItemImageMediumQuality = menu.findItem(R.id.menu_medium_quality_image);
         menuItemImageHighQuality = menu.findItem(R.id.menu_high_quality_image);
@@ -132,6 +218,8 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
             menuItemSortByTrendingDaily.setChecked(true);
         else if (sortBy.equals(getString(R.string.sort_value_favourites)))
             menuItemFavourites.setChecked(true);
+        else if (sortBy.equals(getString(R.string.sort_value_search)))
+            menuItemSearch.setChecked(true);
 
         if (imageQuality.equals(getString(R.string.url_image_quality_low)))
             menuItemImageLowQuality.setChecked(true);
@@ -157,6 +245,7 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
             sortBy = sharedPreferences.getString(getString(R.string.url_key_sort), getString(R.string.sort_value_popularity));
             menuItemSortByPopularity.setChecked(true);
             toolbar.setTitle(getString(R.string.menu_sort_popularity));
+            constraintLayoutSearch.setVisibility(View.GONE);
             refreshMovieList();
 
             return true;
@@ -165,6 +254,7 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
             sortBy = sharedPreferences.getString(getString(R.string.url_key_sort), getString(R.string.sort_value_popularity));
             menuItemSortByUserRating.setChecked(true);
             toolbar.setTitle(getString(R.string.menu_sort_user_rating));
+            constraintLayoutSearch.setVisibility(View.GONE);
             refreshMovieList();
 
             return true;
@@ -173,6 +263,7 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
             sortBy = sharedPreferences.getString(getString(R.string.url_key_sort), getString(R.string.sort_value_popularity));
             menuItemSortByTrendingDaily.setChecked(true);
             toolbar.setTitle(getString(R.string.menu_sort_trending_daily));
+            constraintLayoutSearch.setVisibility(View.GONE);
             refreshMovieList();
 
             return true;
@@ -181,39 +272,49 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
             sortBy = sharedPreferences.getString(getString(R.string.url_key_sort), getString(R.string.sort_value_popularity));
             menuItemFavourites.setChecked(true);
             toolbar.setTitle(getString(R.string.menu_favourites));
+            constraintLayoutSearch.setVisibility(View.GONE);
             refreshMovieList();
 
             return  true;
+        }else if (id == R.id.menu_search) {
+            sharedPreferences.edit().putString(getString(R.string.url_key_sort), getString(R.string.sort_value_search)).commit();
+            sortBy = sharedPreferences.getString(getString(R.string.url_key_sort), getString(R.string.sort_value_popularity));
+            menuItemSearch.setChecked(true);
+            toolbar.setTitle(getString(R.string.menu_search));
+            recyclerViewMovies.setVisibility(View.GONE);
+            constraintLayoutSearch.setVisibility(View.VISIBLE);
+
+            return true;
         }else if (id == R.id.menu_low_quality_image) {
             sharedPreferences.edit().putString(getString(R.string.key_image_resolution_shared_pref), getString(R.string.url_image_quality_low)).commit();
             menuItemImageLowQuality.setChecked(true);
-            refreshMovieList();
+            if (!sortBy.equals(getString(R.string.sort_value_search))) refreshMovieList();
 
             return true;
         } else if (id == R.id.menu_medium_quality_image) {
             sharedPreferences.edit().putString(getString(R.string.key_image_resolution_shared_pref), getString(R.string.url_image_quality_medium)).commit();
             menuItemImageMediumQuality.setChecked(true);
-            refreshMovieList();
+            if (!sortBy.equals(getString(R.string.sort_value_search))) refreshMovieList();
 
             return true;
         } else if (id == R.id.menu_high_quality_image) {
             sharedPreferences.edit().putString(getString(R.string.key_image_resolution_shared_pref), getString(R.string.url_image_quality_high)).commit();
             menuItemImageHighQuality.setChecked(true);
-            refreshMovieList();
+            if (!sortBy.equals(getString(R.string.sort_value_search))) refreshMovieList();
 
             return true;
         } else if (id == R.id.menu_standard_column_count) {
             sharedPreferences.edit().putInt(getString(R.string.key_column_count_shared_pref), STANDARD_COLUMN_COUNT_WIDTH).commit();
             columnWidth = sharedPreferences.getInt(getString(R.string.key_column_count_shared_pref), STANDARD_COLUMN_COUNT_WIDTH);
             menuItemColumnCountStandard.setChecked(true);
-            refreshMovieList();
+            if (!sortBy.equals(getString(R.string.sort_value_search))) refreshMovieList();
 
             return true;
         } else if (id == R.id.menu_higher_column_count) {
             sharedPreferences.edit().putInt(getString(R.string.key_column_count_shared_pref), HIGHER_COLUMN_COUNT_WIDTH).commit();
             columnWidth = sharedPreferences.getInt(getString(R.string.key_column_count_shared_pref), STANDARD_COLUMN_COUNT_WIDTH);
             menuItemColumnCountHigher.setChecked(true);
-            refreshMovieList();
+            if (!sortBy.equals(getString(R.string.sort_value_search))) refreshMovieList();
 
             return true;
         }
@@ -227,11 +328,19 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
         private final String sortBy;
         private final RecyclerView recyclerView;
         private List<Movie> favouriteMovies = null;
+        private String query = "";
 
         BackgroundTask(Context context, String sortBy, RecyclerView recyclerViewMovies) {
             this.context = context;
             this.sortBy = sortBy;
             this.recyclerView = recyclerViewMovies;
+        }
+
+        BackgroundTask(Context context, String sortBy, RecyclerView recyclerViewMovies, String query) {
+            this.context = context;
+            this.sortBy = sortBy;
+            this.recyclerView = recyclerViewMovies;
+            this.query = query;
         }
 
         @Override
@@ -245,7 +354,8 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
                     //let users know they need an internet connection
                     if ((sortBy.equals(getString(R.string.sort_value_popularity)) && customViewModel.getPopularMovies() == null) ||
                             (sortBy.equals(getString(R.string.sort_value_user_rating)) && customViewModel.getHighestRatedMovies() == null) ||
-                            (sortBy.equals(getString(R.string.sort_value_trending_daily)) && customViewModel.getTrendingDailyMovies() == null)) {
+                            (sortBy.equals(getString(R.string.sort_value_trending_daily)) && customViewModel.getTrendingDailyMovies() == null) ||
+                            (sortBy.equals(getString(R.string.sort_value_search)) && customViewModel.getSearchedMovies() == null)) {
                         showNotFound(getString(R.string.message_no_internet), R.drawable.ic_no_internet);
                         // Cancel this task... there's no internet anyways
                         this.cancel(true);
@@ -264,7 +374,10 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
                 return null;
             } else {
                 try {
-                    response = NetworkUtils.fetchMovieData(context, sortBy);
+                    if (sortBy.equals(context.getString(R.string.sort_value_search))) {
+                        response = NetworkUtils.fetchMovieData(context, sortBy, query);
+                    } else
+                        response = NetworkUtils.fetchMovieData(context, sortBy);
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
@@ -277,27 +390,43 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
         protected void onPostExecute(String response) {
             if (response != null && !response.equals("") && !sortBy.equals(getString(R.string.sort_value_favourites))) {
                 // Movies received from API
-                List<Movie> movies = JSONUtils.extractMovies(context, response);
-                setUpRecyclerView(movies);
-                // Show appropriate views after movies are loaded
-                showFetchedMovies();
-                // Cache movies received from API in View Model
-                if (sortBy.equals(getString(R.string.sort_value_popularity))) customViewModel.setPopularMovies(movies);
-                else if (sortBy.equals(getString(R.string.sort_value_user_rating))) customViewModel.setHighestRatedMovies(movies);
-                else if (sortBy.equals(context.getString(R.string.sort_value_trending_daily))) customViewModel.setTrendingDailyMovies(movies);
+                if (JSONUtils.moviesAvailable(context, response)) {
+                    List<Movie> movies = JSONUtils.extractMovies(context, response);
+                    setUpRecyclerView(movies);
+                    // Show appropriate views after movies are loaded
+                    showFetchedMovies();
+                    // Cache movies received from API in View Model
+                    if (sortBy.equals(getString(R.string.sort_value_popularity)))
+                        customViewModel.setPopularMovies(movies);
+                    else if (sortBy.equals(getString(R.string.sort_value_user_rating)))
+                        customViewModel.setHighestRatedMovies(movies);
+                    else if (sortBy.equals(context.getString(R.string.sort_value_trending_daily)))
+                        customViewModel.setTrendingDailyMovies(movies);
+                    else if (sortBy.equals(context.getString(R.string.sort_value_search)))
+                        customViewModel.setSearchedMovies(movies);
+                } else {
+                    if (!sortBy.equals(getString(R.string.sort_value_search)))
+                        showNotFound(getString(R.string.message_no_movies_found), R.drawable.ic_close);
+                    else
+                        showNotFound(getString(R.string.message_no_search_results), R.drawable.ic_close);
+                }
             } else if (response == null && sortBy.equals(getString(R.string.sort_value_popularity)) && customViewModel.getPopularMovies() != null){
-                // Get popular movies from View Model
+                // Get popular movies from ViewModel
                 setUpRecyclerView(customViewModel.getPopularMovies());
                 showFetchedMovies();
             } else if (response == null && sortBy.equals(getString(R.string.sort_value_user_rating)) && customViewModel.getHighestRatedMovies() != null) {
-                // Get highest rated movies from View Model
+                // Get highest rated movies from ViewModel
                 setUpRecyclerView(customViewModel.getHighestRatedMovies());
                 showFetchedMovies();
             } else if (response == null && sortBy.equals(getString(R.string.sort_value_trending_daily)) && customViewModel.getTrendingDailyMovies() != null) {
-                // Get trending_daily rated movies from View Model
+                // Get trending_daily movies from ViewModel
                 setUpRecyclerView(customViewModel.getTrendingDailyMovies());
                 showFetchedMovies();
-            } else {
+            } else if (response == null && sortBy.equals(getString(R.string.sort_value_search)) && customViewModel.getSearchedMovies() != null) {
+                // Get searched movies from ViewModel
+                setUpRecyclerView(customViewModel.getSearchedMovies());
+                showFetchedMovies();
+            }else {
                 // Get movies from database when refreshing manually
                 if (favouriteMovies != null && !favouriteMovies.isEmpty()) {
                     setUpRecyclerView(favouriteMovies);
@@ -358,6 +487,10 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
 
     private void refreshMovieList() {
         new BackgroundTask(MainActivity.this, sortBy, recyclerViewMovies).execute();
+    }
+
+    private void searchMovie(String query) {
+        new BackgroundTask(MainActivity.this, sortBy, recyclerViewMovies, query).execute();
     }
 
     // Get favourite movies from LiveData within the ViewModel

@@ -32,11 +32,69 @@
         android:layout_height="match_parent"
         app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/constraintLayoutSearch"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="?android:attr/actionBarSize"
+            android:layout_marginBottom="4dp"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toTopOf="@id/swipeRefreshLayout">
+
+            <EditText
+                android:id="@+id/editTextSearch"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:imeOptions="actionSearch"
+                android:maxLines="1"
+                android:inputType="text"
+                android:hint="@string/description_edit_text_search"
+                android:layout_marginStart="4dp"
+                android:paddingHorizontal="8dp"
+                android:paddingVertical="16dp"
+                android:textColor="@color/textLight"
+                android:textColorHint="@color/textLightShade"
+                android:background="@drawable/edit_text_border"
+                android:importantForAutofill="no"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toStartOf="@id/imageButtonSearch"
+                app:layout_constraintVertical_bias=".5" />
+
+            <ImageButton
+                android:id="@+id/imageButtonClearQuery"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:src="@drawable/ic_close"
+                android:background="@color/colorPrimary"
+                android:layout_marginEnd="4dp"
+                android:contentDescription="@string/description_image_button_clear_query"
+                android:visibility="gone"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toStartOf="@id/imageButtonSearch"
+                app:layout_constraintVertical_bias=".5"/>
+
+            <ImageButton
+                android:id="@+id/imageButtonSearch"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:src="@drawable/ic_search"
+                android:background="@color/colorPrimary"
+                android:layout_marginEnd="4dp"
+                android:contentDescription="@string/description_image_button_search"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintVertical_bias=".5"/>
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
         <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
             android:id="@+id/swipeRefreshLayout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/constraintLayoutSearch"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintVertical_bias="0.0">
 

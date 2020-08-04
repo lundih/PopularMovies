@@ -47,7 +47,11 @@ class NetworkUtils {
     }
 
     static String fetchMovieData(Context context, String sortBy) throws IOException {
-        return getResponseFromHttpUrl(formURLFromUri(buildUri(context, sortBy)));
+        return getResponseFromHttpUrl(formURLFromUri(buildUri(context, sortBy, "")));
+    }
+
+    static String fetchMovieData(Context context, String sortBy, String query) throws IOException {
+        return getResponseFromHttpUrl(formURLFromUri(buildUri(context, sortBy, query)));
     }
 
     static String fetchMovieData(Context context, int movieID, int requestFor) throws IOException {
@@ -58,18 +62,23 @@ class NetworkUtils {
      * Build URL to query TMDB for the list of movies
      * @param sortBy is used to choose the criteria for sorting the list of movies
      * */
-    private static Uri buildUri(Context context, String sortBy) {
-        if (!sortBy.equals(context.getString(R.string.sort_value_trending_daily))) {
+    private static Uri buildUri(Context context, String sortBy, String query) {
+        if (sortBy.equals(context.getString(R.string.sort_value_popularity)) || sortBy.equals(context.getString(R.string.sort_value_user_rating))) {
             return Uri.parse(context.getString(R.string.url_base_movie) + context.getString(R.string.url_list_of_movies)).buildUpon()
                     .appendQueryParameter(context.getString(R.string.url_key_sort), sortBy)
                     .appendQueryParameter(context.getString(R.string.url_key_api), context.getString(R.string.api_key_value))
                     .build();
-        } else {
-            // Different url for trending_daily movies and also no need for sortBy query parameter
+        } else if (sortBy.equals(context.getString(R.string.sort_value_search))) {
+            return Uri.parse(context.getString(R.string.url_base_movie) + context.getString(R.string.url_list_of_search_movies)).buildUpon()
+                    .appendQueryParameter(context.getString(R.string.url_key_query), query)
+                    .appendQueryParameter(context.getString(R.string.url_key_api), context.getString(R.string.api_key_value))
+                    .build();
+        } else if (sortBy.equals(context.getString(R.string.sort_value_trending_daily))) {
             return Uri.parse(context.getString(R.string.url_base_movie) + context.getString(R.string.url_list_of_trending_daily_movies)).buildUpon()
                     .appendQueryParameter(context.getString(R.string.url_key_api), context.getString(R.string.api_key_value))
                     .build();
-        }
+        } else
+            return Uri.parse("").buildUpon().build();
     }
 
     /**

@@ -18,6 +18,9 @@
         <item android:id="@+id/menu_favourites"
             android:title="@string/menu_favourites"
             app:showAsAction="never"/>
+        <item android:id="@+id/menu_search"
+            android:title="@string/menu_search"
+            app:showAsAction="never"/>
     </group>
 
     <item android:title="@string/menu_group_item_image_quality"

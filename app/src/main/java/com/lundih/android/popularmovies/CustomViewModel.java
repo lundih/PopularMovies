@@ -13,7 +13,9 @@ public class CustomViewModel extends AndroidViewModel {
     private List<Movie> popularMovies = null;
     private List<Movie> highestRatedMovies = null;
     private List<Movie> trendingDailyMovies = null;
+    private List<Movie> searchedMovies = null;
     private Movie movie = null;
+    private String query = null;
 
     public CustomViewModel(@NonNull Application application) {
         super(application);
@@ -38,8 +40,16 @@ public class CustomViewModel extends AndroidViewModel {
         return trendingDailyMovies;
     }
 
+    public List<Movie> getSearchedMovies() {
+        return searchedMovies;
+    }
+
     public Movie getMovie() {
         return movie;
+    }
+
+    public String getQuery() {
+        return query;
     }
 
     public void setPopularMovies(List<Movie> popularMovies) {
@@ -54,7 +64,15 @@ public class CustomViewModel extends AndroidViewModel {
         this.trendingDailyMovies = trendingDailyMovies;
     }
 
+    public void setSearchedMovies(List<Movie> searchedMovies) {
+        this.searchedMovies = searchedMovies;
+    }
+
     public void setMovie(Movie movie) {
         this.movie = movie;
+    }
+
+    public void setQuery(String query) {
+        this.query = query;
     }
 }

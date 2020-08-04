@@ -79,4 +79,17 @@ class JSONUtils {
 
         return movie;
     }
+
+    // Check if the response returned has any movies in it
+    static  boolean moviesAvailable(Context context, String response) {
+        try {
+            JSONObject movieListResponse = new JSONObject(response);
+            JSONArray results = movieListResponse.getJSONArray(context.getString(R.string.json_key_array_results));
+            if (results.length() > 0) return true;
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        return false;
+    }
 }
