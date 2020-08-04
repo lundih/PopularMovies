@@ -302,7 +302,7 @@ public class MovieDetailsActivity extends AppCompatActivity {
                 setUpViews();
                 showMovieDetails();
                 viewModel.setMovie(movie);
-            } else if (detailsResponse == null && viewModel != null) { // Receive movie info from ViewModel
+            } else if (detailsResponse == null && viewModel.getMovie() != null) { // Receive movie info from ViewModel
                 movie = viewModel.getMovie();
                 setUpViews();
                 showMovieDetails();
