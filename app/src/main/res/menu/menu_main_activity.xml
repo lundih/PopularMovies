@@ -2,27 +2,6 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
-    <group
-        android:id="@+id/group_sort"
-        android:orderInCategory="100"
-        android:checkableBehavior="single">
-        <item android:id="@+id/menu_sort_by_popularity"
-            android:title="@string/menu_sort_popularity"
-            app:showAsAction="never"/>
-        <item android:id="@+id/menu_sort_by_user_rating"
-            android:title="@string/menu_sort_user_rating"
-            app:showAsAction="never" />
-        <item android:id="@+id/menu_sort_by_trending_daily"
-            android:title="@string/menu_sort_trending_daily"
-            app:showAsAction="never"/>
-        <item android:id="@+id/menu_favourites"
-            android:title="@string/menu_favourites"
-            app:showAsAction="never"/>
-        <item android:id="@+id/menu_search"
-            android:title="@string/menu_search"
-            app:showAsAction="never"/>
-    </group>
-
     <item android:title="@string/menu_group_item_image_quality"
         android:orderInCategory="101"
         app:showAsAction="never">

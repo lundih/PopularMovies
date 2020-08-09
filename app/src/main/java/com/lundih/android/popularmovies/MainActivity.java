@@ -48,11 +48,6 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
     static final int HIGHER_COLUMN_COUNT_WIDTH = 150;
     private final double landscapeColumnWidthMultiplier = 1.2;
     private SharedPreferences sharedPreferences;
-    private MenuItem menuItemFavourites;
-    private MenuItem menuItemSortByPopularity;
-    private MenuItem menuItemSortByUserRating;
-    private MenuItem menuItemSortByTrendingDaily;
-    private MenuItem menuItemSearch;
     private MenuItem menuItemImageLowQuality;
     private MenuItem menuItemImageMediumQuality;
     private MenuItem menuItemImageHighQuality;
@@ -131,7 +126,6 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
                 if (item.getItemId() == R.id.menu_sort_by_popularity) {
                     sharedPreferences.edit().putString(getString(R.string.url_key_sort), getString(R.string.sort_value_popularity)).commit();
                     sortBy = sharedPreferences.getString(getString(R.string.url_key_sort), getString(R.string.sort_value_popularity));
-                    menuItemSortByPopularity.setChecked(true);
                     toolbar.setTitle(getString(R.string.menu_sort_popularity));
                     constraintLayoutSearch.setVisibility(View.GONE);
                     refreshMovieList();
@@ -140,7 +134,6 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
                 } else if (item.getItemId() == R.id.menu_sort_by_user_rating) {
                     sharedPreferences.edit().putString(getString(R.string.url_key_sort), getString(R.string.sort_value_user_rating)).commit();
                     sortBy = sharedPreferences.getString(getString(R.string.url_key_sort), getString(R.string.sort_value_popularity));
-                    menuItemSortByUserRating.setChecked(true);
                     toolbar.setTitle(getString(R.string.menu_sort_user_rating));
                     constraintLayoutSearch.setVisibility(View.GONE);
                     refreshMovieList();
@@ -149,7 +142,6 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
                 } else if (item.getItemId() == R.id.menu_sort_by_trending_daily) {
                     sharedPreferences.edit().putString(getString(R.string.url_key_sort), getString(R.string.sort_value_trending_daily)).commit();
                     sortBy = sharedPreferences.getString(getString(R.string.url_key_sort), getString(R.string.sort_value_popularity));
-                    menuItemSortByTrendingDaily.setChecked(true);
                     toolbar.setTitle(getString(R.string.menu_sort_trending_daily));
                     constraintLayoutSearch.setVisibility(View.GONE);
                     refreshMovieList();
@@ -158,7 +150,6 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
                 } else if (item.getItemId() == R.id.menu_favourites) {
                     sharedPreferences.edit().putString(getString(R.string.url_key_sort), getString(R.string.sort_value_favourites)).commit();
                     sortBy = sharedPreferences.getString(getString(R.string.url_key_sort), getString(R.string.sort_value_popularity));
-                    menuItemFavourites.setChecked(true);
                     toolbar.setTitle(getString(R.string.menu_favourites));
                     constraintLayoutSearch.setVisibility(View.GONE);
                     refreshMovieList();
@@ -167,7 +158,6 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
                 } else if (item.getItemId() == R.id.menu_search) {
                     sharedPreferences.edit().putString(getString(R.string.url_key_sort), getString(R.string.sort_value_search)).commit();
                     sortBy = sharedPreferences.getString(getString(R.string.url_key_sort), getString(R.string.sort_value_popularity));
-                    menuItemSearch.setChecked(true);
                     toolbar.setTitle(getString(R.string.menu_search));
                     recyclerViewMovies.setVisibility(View.GONE);
                     constraintLayoutSearch.setVisibility(View.VISIBLE);
@@ -288,28 +278,12 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
         // Set the divider for different groups in the menu
         MenuCompat.setGroupDividerEnabled(menu, true);
 
-        menuItemFavourites = menu.findItem(R.id.menu_favourites);
-        menuItemSortByPopularity = menu.findItem(R.id.menu_sort_by_popularity);
-        menuItemSortByUserRating = menu.findItem(R.id.menu_sort_by_user_rating);
-        menuItemSortByTrendingDaily = menu.findItem(R.id.menu_sort_by_trending_daily);
-        menuItemSearch = menu.findItem(R.id.menu_search);
         menuItemImageLowQuality = menu.findItem(R.id.menu_low_quality_image);
         menuItemImageMediumQuality = menu.findItem(R.id.menu_medium_quality_image);
         menuItemImageHighQuality = menu.findItem(R.id.menu_high_quality_image);
         menuItemColumnCountStandard = menu.findItem(R.id.menu_standard_column_count);
         menuItemColumnCountHigher = menu.findItem(R.id.menu_higher_column_count);
         // Check from SharedPreferences to know the last criteria and set to that
-        if (sortBy.equals(getString(R.string.sort_value_popularity)))
-            menuItemSortByPopularity.setChecked(true);
-        else if (sortBy.equals(getString(R.string.sort_value_user_rating)))
-            menuItemSortByUserRating.setChecked(true);
-        else if (sortBy.equals(getString(R.string.sort_value_trending_daily)))
-            menuItemSortByTrendingDaily.setChecked(true);
-        else if (sortBy.equals(getString(R.string.sort_value_favourites)))
-            menuItemFavourites.setChecked(true);
-        else if (sortBy.equals(getString(R.string.sort_value_search)))
-            menuItemSearch.setChecked(true);
-
         if (imageQuality.equals(getString(R.string.url_image_quality_low)))
             menuItemImageLowQuality.setChecked(true);
         else if (imageQuality.equals(getString(R.string.url_image_quality_medium)))
@@ -329,52 +303,7 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
-        if(id == R.id.menu_sort_by_popularity) {
-            sharedPreferences.edit().putString(getString(R.string.url_key_sort), getString(R.string.sort_value_popularity)).commit();
-            sortBy = sharedPreferences.getString(getString(R.string.url_key_sort), getString(R.string.sort_value_popularity));
-            menuItemSortByPopularity.setChecked(true);
-            toolbar.setTitle(getString(R.string.menu_sort_popularity));
-            constraintLayoutSearch.setVisibility(View.GONE);
-            refreshMovieList();
-
-            return true;
-        } else if (id == R.id.menu_sort_by_user_rating) {
-            sharedPreferences.edit().putString(getString(R.string.url_key_sort), getString(R.string.sort_value_user_rating)).commit();
-            sortBy = sharedPreferences.getString(getString(R.string.url_key_sort), getString(R.string.sort_value_popularity));
-            menuItemSortByUserRating.setChecked(true);
-            toolbar.setTitle(getString(R.string.menu_sort_user_rating));
-            constraintLayoutSearch.setVisibility(View.GONE);
-            refreshMovieList();
-
-            return true;
-        } else if (id == R.id.menu_sort_by_trending_daily) {
-            sharedPreferences.edit().putString(getString(R.string.url_key_sort), getString(R.string.sort_value_trending_daily)).commit();
-            sortBy = sharedPreferences.getString(getString(R.string.url_key_sort), getString(R.string.sort_value_popularity));
-            menuItemSortByTrendingDaily.setChecked(true);
-            toolbar.setTitle(getString(R.string.menu_sort_trending_daily));
-            constraintLayoutSearch.setVisibility(View.GONE);
-            refreshMovieList();
-
-            return true;
-        } else if (id == R.id.menu_favourites) {
-            sharedPreferences.edit().putString(getString(R.string.url_key_sort), getString(R.string.sort_value_favourites)).commit();
-            sortBy = sharedPreferences.getString(getString(R.string.url_key_sort), getString(R.string.sort_value_popularity));
-            menuItemFavourites.setChecked(true);
-            toolbar.setTitle(getString(R.string.menu_favourites));
-            constraintLayoutSearch.setVisibility(View.GONE);
-            refreshMovieList();
-
-            return  true;
-        }else if (id == R.id.menu_search) {
-            sharedPreferences.edit().putString(getString(R.string.url_key_sort), getString(R.string.sort_value_search)).commit();
-            sortBy = sharedPreferences.getString(getString(R.string.url_key_sort), getString(R.string.sort_value_popularity));
-            menuItemSearch.setChecked(true);
-            toolbar.setTitle(getString(R.string.menu_search));
-            recyclerViewMovies.setVisibility(View.GONE);
-            constraintLayoutSearch.setVisibility(View.VISIBLE);
-
-            return true;
-        }else if (id == R.id.menu_low_quality_image) {
+        if (id == R.id.menu_low_quality_image) {
             sharedPreferences.edit().putString(getString(R.string.key_image_resolution_shared_pref), getString(R.string.url_image_quality_low)).commit();
             menuItemImageLowQuality.setChecked(true);
             if (!sortBy.equals(getString(R.string.sort_value_search))) refreshMovieList();
