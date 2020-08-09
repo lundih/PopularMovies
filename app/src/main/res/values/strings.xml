@@ -86,7 +86,7 @@
     <string name="message_no_favourites">No favourites were found. Add favourites to view them here, even when offline!</string>
 
     <string name="menu_favourites">Favourites</string>
-    <string name="menu_sort_popularity">Popular Movies</string>
+    <string name="menu_sort_popularity">Popular</string>
     <string name="menu_sort_user_rating">Highest Rated</string>
     <string name="menu_sort_trending_daily">Trending Today</string>
     <string name="menu_search">Search</string>

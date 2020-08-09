@@ -1,5 +1,6 @@
 package com.lundih.android.popularmovies;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.constraintlayout.widget.ConstraintLayout;
@@ -19,6 +20,7 @@ import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -32,6 +34,8 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+
+import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 import java.io.IOException;
 import java.util.List;
@@ -81,6 +85,7 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
         mContext = getApplicationContext();
         customViewModel = new ViewModelProvider(this).get(CustomViewModel.class);
 
+        BottomNavigationView bottomNavigationViewMainActivity = findViewById(R.id.bottomNavMainActivity);
         constraintLayoutSearch = findViewById(R.id.constraintLayoutSearch);
         constraintLayoutSearch.setVisibility(View.GONE);
 
@@ -88,11 +93,22 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
         toolbar = findViewById(R.id.toolbarMainActivity);
         setSupportActionBar(toolbar);
         String title = getString(R.string.menu_sort_popularity);
-        if (sortBy.equals(getString(R.string.sort_value_popularity))) title = getString(R.string.menu_sort_popularity);
-        else if (sortBy.equals(getString(R.string.sort_value_user_rating))) title = getString(R.string.menu_sort_user_rating);
-        else if (sortBy.equals(getString(R.string.sort_value_favourites))) title = getString(R.string.menu_favourites);
-        else if (sortBy.equals(getString(R.string.sort_value_trending_daily))) title = getString(R.string.menu_sort_trending_daily);
-        else if (sortBy.equals(getString(R.string.sort_value_search))) title =  getString(R.string.menu_search);
+        if (sortBy.equals(getString(R.string.sort_value_popularity))) {
+            title = getString(R.string.menu_sort_popularity);
+            bottomNavigationViewMainActivity.setSelectedItemId(R.id.menu_sort_by_popularity);
+        } else if (sortBy.equals(getString(R.string.sort_value_user_rating))) {
+            title = getString(R.string.menu_sort_user_rating);
+            bottomNavigationViewMainActivity.setSelectedItemId(R.id.menu_sort_by_user_rating);
+        } else if (sortBy.equals(getString(R.string.sort_value_favourites))) {
+            title = getString(R.string.menu_favourites);
+            bottomNavigationViewMainActivity.setSelectedItemId(R.id.menu_favourites);
+        } else if (sortBy.equals(getString(R.string.sort_value_trending_daily))) {
+            title = getString(R.string.menu_sort_trending_daily);
+            bottomNavigationViewMainActivity.setSelectedItemId(R.id.menu_sort_by_trending_daily);
+        } else if (sortBy.equals(getString(R.string.sort_value_search))) {
+            title =  getString(R.string.menu_search);
+            bottomNavigationViewMainActivity.setSelectedItemId(R.id.menu_search);
+        }
         toolbar.setTitle(title);
 
         recyclerViewMovies = findViewById(R.id.recyclerViewMovies);
@@ -107,6 +123,64 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
         Button buttonRetry = findViewById(R.id.buttonRetryMovieFetching);
         ImageButton imageButtonSearch = findViewById(R.id.imageButtonSearch);
         final ImageButton imageButtonClearQuery = findViewById(R.id.imageButtonClearQuery);
+        bottomNavigationViewMainActivity.setOnNavigationItemSelectedListener(
+                new BottomNavigationView.OnNavigationItemSelectedListener() {
+            @SuppressLint("ApplySharedPref")
+            @Override
+            public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+                if (item.getItemId() == R.id.menu_sort_by_popularity) {
+                    sharedPreferences.edit().putString(getString(R.string.url_key_sort), getString(R.string.sort_value_popularity)).commit();
+                    sortBy = sharedPreferences.getString(getString(R.string.url_key_sort), getString(R.string.sort_value_popularity));
+                    menuItemSortByPopularity.setChecked(true);
+                    toolbar.setTitle(getString(R.string.menu_sort_popularity));
+                    constraintLayoutSearch.setVisibility(View.GONE);
+                    refreshMovieList();
+
+                    return true;
+                } else if (item.getItemId() == R.id.menu_sort_by_user_rating) {
+                    sharedPreferences.edit().putString(getString(R.string.url_key_sort), getString(R.string.sort_value_user_rating)).commit();
+                    sortBy = sharedPreferences.getString(getString(R.string.url_key_sort), getString(R.string.sort_value_popularity));
+                    menuItemSortByUserRating.setChecked(true);
+                    toolbar.setTitle(getString(R.string.menu_sort_user_rating));
+                    constraintLayoutSearch.setVisibility(View.GONE);
+                    refreshMovieList();
+
+                    return true;
+                } else if (item.getItemId() == R.id.menu_sort_by_trending_daily) {
+                    sharedPreferences.edit().putString(getString(R.string.url_key_sort), getString(R.string.sort_value_trending_daily)).commit();
+                    sortBy = sharedPreferences.getString(getString(R.string.url_key_sort), getString(R.string.sort_value_popularity));
+                    menuItemSortByTrendingDaily.setChecked(true);
+                    toolbar.setTitle(getString(R.string.menu_sort_trending_daily));
+                    constraintLayoutSearch.setVisibility(View.GONE);
+                    refreshMovieList();
+
+                    return true;
+                } else if (item.getItemId() == R.id.menu_favourites) {
+                    sharedPreferences.edit().putString(getString(R.string.url_key_sort), getString(R.string.sort_value_favourites)).commit();
+                    sortBy = sharedPreferences.getString(getString(R.string.url_key_sort), getString(R.string.sort_value_popularity));
+                    menuItemFavourites.setChecked(true);
+                    toolbar.setTitle(getString(R.string.menu_favourites));
+                    constraintLayoutSearch.setVisibility(View.GONE);
+                    refreshMovieList();
+
+                    return  true;
+                } else if (item.getItemId() == R.id.menu_search) {
+                    sharedPreferences.edit().putString(getString(R.string.url_key_sort), getString(R.string.sort_value_search)).commit();
+                    sortBy = sharedPreferences.getString(getString(R.string.url_key_sort), getString(R.string.sort_value_popularity));
+                    menuItemSearch.setChecked(true);
+                    toolbar.setTitle(getString(R.string.menu_search));
+                    recyclerViewMovies.setVisibility(View.GONE);
+                    constraintLayoutSearch.setVisibility(View.VISIBLE);
+                    InputMethodManager inputMethodManager = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+                    inputMethodManager.showSoftInput(editTextSearch, InputMethodManager.SHOW_IMPLICIT);
+
+                    return true;
+                }else {
+                    return false;
+                }
+            }
+        });
+
         buttonRetry.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -158,6 +232,21 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
             @Override
             public void afterTextChanged(Editable s) {
 
+            }
+        });
+        // Show keyboard when the editText gains focus. Does not work without the delay for some reason
+        editTextSearch.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(final View v, boolean hasFocus) {
+                if (hasFocus) {
+                    editTextSearch.postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            InputMethodManager inputMethodManager = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+                            inputMethodManager.showSoftInput(v, InputMethodManager.SHOW_IMPLICIT);
+                        }
+                    }, 300);
+                }
             }
         });
         imageButtonClearQuery.setOnClickListener(new View.OnClickListener() {
