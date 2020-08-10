@@ -12,6 +12,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
@@ -32,12 +33,15 @@ import com.google.android.material.appbar.AppBarLayout;
 import com.google.android.material.appbar.CollapsingToolbarLayout;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.snackbar.Snackbar;
+import com.squareup.picasso.Callback;
 import com.squareup.picasso.Picasso;
 
 import java.io.IOException;
 import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.ExecutionException;
+
+import jp.wasabeef.picasso.transformations.BlurTransformation;
 
 import static android.text.Layout.JUSTIFICATION_MODE_INTER_WORD;
 import static androidx.coordinatorlayout.widget.CoordinatorLayout.*;
@@ -46,6 +50,7 @@ public class MovieDetailsActivity extends AppCompatActivity {
     private int movieID;
     private Movie movie;
     private CoordinatorLayout coordinatorLayout;
+    private ConstraintLayout constraintLayoutMovieDetails;
     private AppBarLayout appBarLayout;
     private ProgressBar progressBarFetchingMovie;
     private ConstraintLayout constraintLayoutMovieNotFound;
@@ -82,6 +87,7 @@ public class MovieDetailsActivity extends AppCompatActivity {
             actionBar.setDisplayHomeAsUpEnabled(true);
         }
 
+        constraintLayoutMovieDetails = findViewById(R.id.constraintLayoutMovieDetails);
         CollapsingToolbarLayout collapsingToolbarLayout = findViewById(R.id.collapsingToolbar);
         coordinatorLayout = findViewById(R.id.coordinatorLayout);
         appBarLayout = findViewById(R.id.appBarLayout);
@@ -121,13 +127,14 @@ public class MovieDetailsActivity extends AppCompatActivity {
             }
             collapsingToolbarLayout.setTitle(getIntent().getExtras().getString(getString(R.string.intent_key_movie_title)));
             refreshMovie(isFavourite);
-            appBarLayout.post(new Runnable() {
+            // Needs the delay to work consistently for some reason
+            appBarLayout.postDelayed(new Runnable() {
                 @Override
                 public void run() {
                     int heightPx = imageViewMoviePoster.getHeight();
-                    setAppBarOffset(heightPx/3);
+                    setAppBarOffset(heightPx/2);
                 }
-            });
+            }, 100);
         }
         buttonRetry.setOnClickListener(new OnClickListener() {
             @Override
@@ -312,61 +319,92 @@ public class MovieDetailsActivity extends AppCompatActivity {
         }
 
         private void setUpViews(){
-            Picasso.get().load(context.getString(R.string.url_base_image) +
-                    PreferenceManager.getDefaultSharedPreferences(context).getString(getString(R.string.key_image_resolution_shared_pref), getString(R.string.url_image_quality_medium)) +
-                    movie.getMoviePoster())
-                    .placeholder(R.drawable.ic_image_place_holder)
-                    .into(imageViewMoviePoster);
-            if (movie.getRuntime() > 0) {
-                int hours = movie.getRuntime()/60;
-                int minutes = movie.getRuntime()%60;
-                String runtime;
-                if (hours > 0)
-                    runtime = hours + getString(R.string.text_runtime_hours) + getString(R.string.white_space) + minutes + getString(R.string.text_runtime_minutes);
-                else
-                    runtime = minutes + getString(R.string.text_runtime_minutes);
-                textViewRuntime.setText(runtime);
-            }
-            if (movie.getUserRating()>0) {
-                ratingBarUserRating.setRating((float) movie.getUserRating());
-                String rating = Double.toString(movie.getUserRating());
-                textViewUserRating.setText(rating);
-            }
-            if (movie.getReleaseDate()!=null && !movie.getReleaseDate().equals(""))
-                textViewReleaseDate.setText(movie.getReleaseDate());
-            if (movie.getGenre() != null)
-                if (movie.getGenre().size() > 0) {
-                    String genres = "";
-                    for (int i = 0; i < movie.getGenre().size(); i++) {
-                        if (i != movie.getGenre().size() - 1)
-                            genres = genres.concat(movie.getGenre().get(i)) + getString(R.string.comma);
-                        else
-                            genres = genres.concat(movie.getGenre().get(i));
+            if (movie != null) {
+                Picasso.get().load(context.getString(R.string.url_base_image) +
+                        PreferenceManager.getDefaultSharedPreferences(context).getString(getString(R.string.key_image_resolution_shared_pref), getString(R.string.url_image_quality_medium)) +
+                        movie.getMoviePoster())
+                        .placeholder(R.drawable.ic_image_place_holder)
+                        .into(imageViewMoviePoster, new com.squareup.picasso.Callback(){
+                            @Override
+                            public void onSuccess() {
+                                // Adjust poster size
+                                appBarLayout.postDelayed(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        int heightPx = imageViewMoviePoster.getHeight();
+                                        setAppBarOffset(heightPx/2);
+                                    }
+                                }, 100);
+                            }
+
+                            @Override
+                            public void onError(Exception e) { }
+                        });
+                if (movie.getRuntime() > 0) {
+                    int hours = movie.getRuntime() / 60;
+                    int minutes = movie.getRuntime() % 60;
+                    String runtime;
+                    if (hours > 0)
+                        runtime = hours + getString(R.string.text_runtime_hours) + getString(R.string.white_space) + minutes + getString(R.string.text_runtime_minutes);
+                    else
+                        runtime = minutes + getString(R.string.text_runtime_minutes);
+                    textViewRuntime.setText(runtime);
+                }
+                if (movie.getUserRating() > 0) {
+                    ratingBarUserRating.setRating((float) movie.getUserRating());
+                    String rating = Double.toString(movie.getUserRating());
+                    textViewUserRating.setText(rating);
+                }
+                if (movie.getReleaseDate() != null && !movie.getReleaseDate().equals(""))
+                    textViewReleaseDate.setText(movie.getReleaseDate());
+                if (movie.getGenre() != null)
+                    if (movie.getGenre().size() > 0) {
+                        String genres = "";
+                        for (int i = 0; i < movie.getGenre().size(); i++) {
+                            if (i != movie.getGenre().size() - 1)
+                                genres = genres.concat(movie.getGenre().get(i)) + getString(R.string.comma);
+                            else
+                                genres = genres.concat(movie.getGenre().get(i));
+                        }
+                        textViewGenre.setText(genres);
                     }
-                    textViewGenre.setText(genres);
+                if (movie.getTagLine() != null && !movie.getTagLine().equals(""))
+                    textViewTagLine.setText(movie.getTagLine());
+                if (movie.getPlotSynopsis() != null && !movie.getPlotSynopsis().equals("")) {
+                    textViewPlotSynopsis.setText(movie.getPlotSynopsis());
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                        textViewPlotSynopsis.setJustificationMode(JUSTIFICATION_MODE_INTER_WORD);
+                    }
                 }
-            if (movie.getTagLine() != null && !movie.getTagLine().equals(""))
-                textViewTagLine.setText(movie.getTagLine());
-            if (movie.getPlotSynopsis() != null && !movie.getPlotSynopsis().equals("")) {
-                textViewPlotSynopsis.setText(movie.getPlotSynopsis());
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                    textViewPlotSynopsis.setJustificationMode(JUSTIFICATION_MODE_INTER_WORD);
+                if (movie.getTrailer() != null && movie.getTrailer().size() > 0) {
+                    TrailerAdapter trailerAdapter = new TrailerAdapter(context, movie.getTrailer(), movie.getMoviePoster());
+                    // Let trailers scroll horizontally
+                    RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false);
+                    recyclerViewTrailers.setLayoutManager(layoutManager);
+                    recyclerViewTrailers.setAdapter(trailerAdapter);
                 }
+                if (movie.getReview() != null && movie.getReview().size() > 0) {
+                    ReviewAdapter reviewAdapter = new ReviewAdapter(context, movie.getReview());
+                    RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(context);
+                    recyclerViewReviews.setLayoutManager(layoutManager);
+                    recyclerViewReviews.setAdapter(reviewAdapter);
+                }
+                // Load activity background
+                final ImageView imageView = new ImageView(context);
+                Picasso.get().load(context.getString(R.string.url_base_image) +
+                        PreferenceManager.getDefaultSharedPreferences(context).getString(context.getString(R.string.key_image_resolution_shared_pref), context.getString(R.string.url_image_quality_medium)) + movie.getMoviePoster())
+                        .transform(new BlurTransformation(context, 25, 5))
+                        .into(imageView, new com.squareup.picasso.Callback() {
+                            @Override
+                            public void onSuccess() {
+                                constraintLayoutMovieDetails.setBackground(imageView.getDrawable());
+                            }
+
+                            @Override
+                            public void onError(Exception e) { }
+                        });
+                fabFavourite.setVisibility(VISIBLE);
             }
-            if (movie.getTrailer() != null && movie.getTrailer().size() > 0) {
-                TrailerAdapter trailerAdapter = new TrailerAdapter(context, movie.getTrailer(), movie.getMoviePoster());
-                // Let trailers scroll horizontally
-                RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false);
-                recyclerViewTrailers.setLayoutManager(layoutManager);
-                recyclerViewTrailers.setAdapter(trailerAdapter);
-            }
-            if (movie.getReview() != null && movie.getReview().size() > 0) {
-                ReviewAdapter reviewAdapter = new ReviewAdapter(context, movie.getReview());
-                RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(context);
-                recyclerViewReviews.setLayoutManager(layoutManager);
-                recyclerViewReviews.setAdapter(reviewAdapter);
-            }
-            fabFavourite.setVisibility(VISIBLE);
         }
     }
 

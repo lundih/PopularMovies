@@ -275,9 +275,6 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater menuInflater = getMenuInflater();
         menuInflater.inflate(R.menu.menu_main_activity, menu);
-        // Set the divider for different groups in the menu
-        MenuCompat.setGroupDividerEnabled(menu, true);
-
         menuItemImageLowQuality = menu.findItem(R.id.menu_low_quality_image);
         menuItemImageMediumQuality = menu.findItem(R.id.menu_medium_quality_image);
         menuItemImageHighQuality = menu.findItem(R.id.menu_high_quality_image);
