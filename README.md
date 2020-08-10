@@ -1,10 +1,10 @@
 ### PopularMovies
 
-Check out what movies are popular and/or highest rated and add favourites to you collection!<br>
+Check out what movies are popular,  highest rated, or trending, and add favourites to you collection! You can also search for movies.<br>
 
 The app uses the TMDb API for movies. To get it working, an API key has to be provided. This can be retrieved form <a href='https://www.themoviedb.org/'>TMDb</a> by following the instructions provided there. After receiving the key, place it within the '<string name="api_key_value">[Your API key here]</string>' tag found in the strings resource file (app>src>main>res>values>strings.xml). This project is part of the Udacity Android Developer Nanodegree program.
 <p align="left">
-  <img src="img/popular_movies_app.png" width="700"/>
+  <img src="img/popular_movies_app.png" width="800"/>
 </p><br>
 
 ### Project Overview
