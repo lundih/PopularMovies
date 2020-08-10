@@ -127,14 +127,6 @@ public class MovieDetailsActivity extends AppCompatActivity {
             }
             collapsingToolbarLayout.setTitle(getIntent().getExtras().getString(getString(R.string.intent_key_movie_title)));
             refreshMovie(isFavourite);
-            // Needs the delay to work consistently for some reason
-            appBarLayout.postDelayed(new Runnable() {
-                @Override
-                public void run() {
-                    int heightPx = imageViewMoviePoster.getHeight();
-                    setAppBarOffset(heightPx/2);
-                }
-            }, 100);
         }
         buttonRetry.setOnClickListener(new OnClickListener() {
             @Override
@@ -334,7 +326,7 @@ public class MovieDetailsActivity extends AppCompatActivity {
                                         int heightPx = imageViewMoviePoster.getHeight();
                                         setAppBarOffset(heightPx/2);
                                     }
-                                }, 100);
+                                }, 10);
                             }
 
                             @Override
